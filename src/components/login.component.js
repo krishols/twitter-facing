@@ -18,7 +18,7 @@ import {
 export default class Login extends Component {
     constructor(props) {
         super(props);
-       // axios.defaults.baseURL = 'https://cpeg-1.herokuapp.com/';
+        axios.defaults.baseURL = 'https://staging-twittah.herokuapp.com',
         this.handleLogin = this.handleLogin.bind(this);
         this.reset();
     }
@@ -35,7 +35,7 @@ export default class Login extends Component {
     }
     handleLogin(e) {
         axios
-            .post(`/login-attempt`, this.state)
+            .post('/login-attempt', this.state)
             .then(() => {
                 const path = '/allusers/' + this.state.username;
                 localStorage.setItem('currentUser', this.state.username);
