@@ -18,7 +18,7 @@ import {
 export default class Login extends Component {
     constructor(props) {
         super(props);
-        axios.defaults.baseURL = 'https://staging-twittah.herokuapp.com',
+        axios.defaults.baseURL = 'https://staging-twittah.herokuapp.com';
         this.handleLogin = this.handleLogin.bind(this);
         this.reset();
     }
