@@ -1,0 +1,8 @@
+{
+    "development": {
+      "SERVER_URI": "localhost:3001"
+    },
+    "production": {
+      "SERVER_URI": "https://staging-twittah.herokuapp.com/"
+    }
+}
