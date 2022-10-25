@@ -14,7 +14,7 @@ import axios from 'axios';
 import configs from './configs.json';
 function App() {
   const [data, setData] = useState(null);
-  axios.defaults.baseURL = configs.SERVER_URI;
+ axios.defaults.baseURL = 'https://staging-twittah.herokuapp.com';
   document.body.style = 'background: #fefae0;';
 
   

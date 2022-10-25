@@ -11,6 +11,7 @@ export default class UserPage extends Component {
 
     constructor(props) {
         super(props);
+        axios.defaults.baseURL = 'https://staging-twittah.herokuapp.com';
         this.path = window.location.pathname;
         this.id = this.path.split('/').pop();
         this.path = '/users/' + this.id;
