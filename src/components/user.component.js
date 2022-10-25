@@ -13,10 +13,9 @@ export default class UserPage extends Component {
         super(props);
         this.path = window.location.pathname;
         this.id = this.path.split('/').pop();
-        this.path = '/users/'+this.id;
+        this.path = '/users/' + this.id;
+       // axios.defaults.baseURL = 'https://staging-twittah.herokuapp.com';
 
-        let data;
-        let fn, ln, email, username, pw, tweets;
         this.state = {
             tweetDraft: '',
             some: ''
@@ -26,13 +25,13 @@ export default class UserPage extends Component {
         this.sendTweet = this.sendTweet.bind(this);
     };
 
-    callAPI() {
-        console.log(configs.SERVER_URI);
-        console.log(this.path);
-        axios.get(this.path)
+
+    /*
+async callAPI() {
+       // console.log("API call");
+        await axios.get('https://staging-twittah.herokuapp.com' + this.path)
             .then(res => {
                 //       console.log(res);
-                console.log(this.res);
                 this.setState({
                     fn: res.data.fn,
                     ln: res.data.ln,
@@ -42,52 +41,104 @@ export default class UserPage extends Component {
                     tweets: res.data.tweets,
                     followers: res.data.followers,
                     following: res.data.following
-
+                    
                 })
+                return true;
             })
-            .catch(err => {
-                console.error(err);
-            });
-            axios.get(this.path + 'profile-pic')
+    
+        };
+
+    */
+
+  async  callAPI() {
+        // console.log(configs.SERVER_URI)
+        console.log(this.path);
+      await  axios.get('https://staging-twittah.herokuapp.com' +this.path)
             .then(res => {
+                //       console.log(res);
+                console.log(res);
+                if (res != null) {
+               
+                    this.setState({
+                        fn: res.data.fn,
+                        ln: res.data.ln,
+                        email: res.data.email,
+                        username: res.data.username,
+                        // pw: res.data.pw,
+                        tweets: res.data.tweets,
+                        followers: res.data.followers,
+                        following: res.data.following
+
+                    }) 
+                }
+            return res;})
+            .then(res => {
+                    if (res.data.username = localStorage.getItem('currentUser')) {
+                        if (res.data.following != null){
+                            const numFollowing = Object.keys(res.data.following).length;
+                            const following = Object.keys(res.data.following);
+                            console.log(following);
+                            for (var i = 0; i < numFollowing; i++) {
+                                var object = following[i];
+                                console.log(object);
+                                localStorage.setItem([object], 'true');
+    
+                        }}
+                        return true;
+                    }
+                }
+            )
+                .catch(err => {
+                    console.error(err);
+                });
+         /*       })
+            .then(res => { 
+                axios.get(this.path + '/profile-pic') 
+            })
+            .then(res => {
+                if (res != null) {
                 console.log(res.data);
                 this.setState({ pfp: res.data });
                 console.log(this.state);
+                }
             })
-            .catch(err => {
-                console.error(err);
-            });
+*/
+         
+        
+
 
     };
 
-    sendTweet() {
+  async  sendTweet() {
         const draftContent = this.state.tweetDraft;
         const date = new Date();
         const nowSec = date.getTime();
         const newTweet = { username: this.state.username, time: nowSec, content: draftContent };
-        const path = '/users/' + this.state.username + '/add-tweet';
+        const path = '/' +  this.state.username + '/add-tweet';
         axios.post(path, newTweet)
             .then(() => {
                 this.callAPI();
                 console.log("Sent tweet");
                 console.log(this.state);
+                return true;
             })
             .catch(err => {
                 console.error(err);
             });
     }
 
-    onFollow() {
+   async onFollow() {
         const user = localStorage.getItem('currentUser');
         const userToFollow = this.state.username;
         const date = new Date();
         const nowSec = date.getTime();
         const sendData = { timestamp: nowSec, username: user, toFollow: userToFollow };
-        axios.post('/click-follow', sendData)
+       await axios.post('/click-follow', sendData)
             .then(() => {
                 console.log("Follower added!");
                 localStorage.setItem(this.state.username, true);
                 this.callAPI();
+                return true;
             }
 
             )
@@ -97,17 +148,18 @@ export default class UserPage extends Component {
 
     };
 
-    onUnfollow() {
+  async  onUnfollow() {
         const user = localStorage.getItem('currentUser');
         const userToUnfollow = this.state.username;
         const date = new Date();
         const nowSec = date.getTime();
         const sendData = { timestamp: nowSec, username: user, toUnfollow: userToUnfollow };
-        axios.post('/click-unfollow', sendData)
+      await  axios.post('/click-unfollow', sendData)
             .then(() => {
                 console.log("Follower removed!");
                 localStorage.setItem(this.state.username, false);
                 this.callAPI();
+                return true;
             }
 
             )
@@ -125,7 +177,8 @@ export default class UserPage extends Component {
     }
 
     render() {
-        if (this.state.fn == null) { this.callAPI(); }
+        if (this.state.tweets == null) { this.callAPI(); 
+        console.log(this.state);};
         return (
             <div style={{ 'padding-top': '60px', height: '100%' }}>
                 <div className="vh-100" style={{ backgroundColor: '#fefae0' }}>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from "./custom-axios";
+import axios from "axios";
 import { BrowserRouter as Router, Routes, Route, Link, redirect } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import {
@@ -27,7 +27,7 @@ class SignUp extends Component {
   
   constructor(props) {
     super(props);
-    axios.defaults.baseURL = 'https://cpeg-1.herokuapp.com/';
+  //  axios.defaults.baseURL = 'https://staging-twittah.herokuapp.com' ;
     this.handleSubmit = this.handleSubmit.bind(this);
     this.reset();
   }
@@ -53,10 +53,10 @@ class SignUp extends Component {
   }
   handleSubmit(e) {
     console.log('You clicked submit!');
-    
+    this.setState({following: this.state.username});
     console.log(this.state);
     axios
-      .post('/newuser', this.state)
+      .post('https://staging-twittah.herokuapp.com/newuser', this.state)
 
       .then(() => {
         console.log('User Received');
@@ -99,7 +99,7 @@ render() {
               </MDBRow>
 
               <MDBInput wrapperClass='mb-4' label='Email' id='email' type='email' value={this.state.email} onChange={evt => this.setState({ email: evt.target.value })} />
-              <MDBInput wrapperClass='mb-4' label='Username' id='username' type='username' value={this.state.username} onChange={evt => this.setState({ username: evt.target.value })} />
+              <MDBInput wrapperClass='mb-4' label='Username' id='username' type='username' value={this.state.username} onChange={evt => this.setState({ username: evt.target.value})} />
               <MDBInput wrapperClass='mb-4' label='Password' id='pw' type='password' value={this.state.pw} onChange={evt => this.setState({ pw: evt.target.value })} />
           
 

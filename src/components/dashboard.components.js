@@ -20,7 +20,6 @@ export default class Dashboard extends Component {
     
     constructor(props) {
         super(props);
-        axios.defaults.baseURL = 'https://cpeg-1.herokuapp.com/';
         this.user = localStorage.getItem('currentUser');
     
         this.path = '/users/' + this.user;
@@ -30,7 +29,7 @@ export default class Dashboard extends Component {
         this.state = {
             tweetDraft: '',
             some: '',
-            dashboardTweets: []
+            following: ''
         };
 
     };
@@ -41,14 +40,15 @@ export default class Dashboard extends Component {
 
     SAFE_componentWillMount() {
         this.callAPI = this.callAPI.bind(this);
-        this.getFollowingTweets = this.getFollowingTweets.bind(this);
+        this.getFollowing = this.getFollowing.bind(this);
+        this.getTweets = this.getTweets.bind(this);
 
 
 
     }
-    callAPI() {
+async callAPI() {
        // console.log("API call");
-        axios.get(this.path)
+        await axios.get('https://staging-twittah.herokuapp.com' + this.path)
             .then(res => {
                 //       console.log(res);
                 this.setState({
@@ -62,28 +62,70 @@ export default class Dashboard extends Component {
                     following: res.data.following
                     
                 })
-                
+                return true;
             })
-    };
-
-    getFollowingTweets() {
-        console.log("grr"); 
-        axios.get('/users/' + this.state.username + '/following-tweets')
+            .then((res) =>{
+                this.getTweets();
+                console.log(this.state);
+            }
+            )
+    
+        };
+/*
+    getFollowing() {
+     //   console.log("grr"); 
+        axios.get('https://staging-twittah.herokuapp.com/users/' + this.state.username + '/following')
         .then(res => {
             console.log(res);
-            this.setState({dashboardTweets:res.data});
+            this.setState({following:res.data});
+            console.log(this.state);
         })
+
+     
 
         .catch(err => {
             console.log("Sigh");
                 console.error(err);
             });
+   
     }
+    */
+async getTweets() {
+        const users = Object.keys(this.state.following);
+        console.log(users);
+       
+         for await (var account of users) {
+            var tweets = [];
+            axios.get('https://staging-twittah.herokuapp.com/users/' + account)
+            .then(res => {
+                
+                console.log(account);
+                console.log(res);
+             //   this.setState({dashboardTweets:res.data.tweets});
+             var tempTweets = res.data.tweets;
+             const numTweets = Object.keys(tempTweets).length - 1;
+            var timestamps = Object.keys(tempTweets).reverse();
+        
+            tweets.push(tempTweets);
+                
+            }).then( res => {
+            console.log(tweets);
+            this.setState({dashboardTweets: tweets});
+            return tweets;
+
+         });
+        }
+
+             
+        
+               
+     };
     render() {
-        if (this.state.fn == null) { this.callAPI(); this.getFollowingTweets()};
-    //    if (this.state.dashboardTweets == []) {this.getFollowingTweets();};
-        //todo is replace user's tweets with their followers tweets
-        console.log(this.state);
+        if (this.state.username == null) { this.callAPI();};
+ 
+        if (this.state.dashboardTweets == null) {
+            this.getTweets();
+                    };
         return (
             
         <MDBContainer style={{'padding-top': '60px'}}> 

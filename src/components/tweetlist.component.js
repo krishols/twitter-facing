@@ -32,7 +32,7 @@ function formatDate(date) {
   
 const UserTweetList = (props) => {
  //   console.log(props);
-  //  console.log(props.tweets);
+    console.log(props.tweets);
     const username = props.username;
     var numTweets = 0;
     let timestamps = [];

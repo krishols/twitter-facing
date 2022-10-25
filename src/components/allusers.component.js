@@ -20,7 +20,7 @@ export default class AllUsers extends Component {
     
     constructor(props) {
         super(props);
-        axios.defaults.baseURL = 'https://cpeg-1.herokuapp.com/';
+  //      axios.defaults.baseURL = 'https://staging-twitta.herokuapp.com';
         this.user = localStorage.getItem('currentUser');
     
         this.path = '/users/' + this.user;
@@ -43,9 +43,9 @@ export default class AllUsers extends Component {
     }
 
 
-    getUsers() {
+ async    getUsers() {
 
-        axios.get('/users')
+       await axios.get('https://staging-twittah.herokuapp.com/users')
         .then(res => {
             console.log(res);
             this.setState({users:res.data});
@@ -63,7 +63,7 @@ export default class AllUsers extends Component {
             }
             this.setState({userCards: rows});
         };
-        
+        return true;
         })
 
         .catch(err => {

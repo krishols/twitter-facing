@@ -8,8 +8,8 @@ export default class UserCard extends Component {
 
     constructor(props) {
         super(props);
-  //      axios.defaults.baseURL = 'https://cpeg-1.herokuapp.com/';
-      
+     //   axios.defaults.baseURL = 'https://staging-twittah.herokuapp.com' ;
+     //axios.defaults.baseURL = 'https://staging-twitta.herokuapp.com';
         this.username = props.username;
       
        this.path = props.path;
@@ -37,7 +37,7 @@ export default class UserCard extends Component {
         const date = new Date();
         const nowSec = date.getTime();
         const sendData = { timestamp: nowSec, username: user, toFollow: userToFollow };
-        axios.post('/click-follow', sendData)
+        axios.post('https://staging-twittah.herokuapp.com/click-follow', sendData)
             .then(() => {
                 console.log("Follower added!");
                 localStorage.setItem(this.state.username, true);
@@ -58,7 +58,7 @@ export default class UserCard extends Component {
         const date = new Date();
         const nowSec = date.getTime();
         const sendData = { timestamp: nowSec, username: user, toUnfollow: userToUnfollow };
-        axios.post('/click-unfollow', sendData)
+        axios.post('https://staging-twittah.herokuapp.com/click-unfollow', sendData)
             .then(() => {
                 console.log("Follower removed!");
                 localStorage.setItem(this.state.username, false);
@@ -73,11 +73,17 @@ export default class UserCard extends Component {
 
     };
 
-    callAPI() {
 
-        axios.get(`${this.path}`)
+
+
+   async callAPI() {
+
+      await  axios.get('https://staging-twittah.herokuapp.com'+ this.path)
+
+      
             .then(res => {
-                //       console.log(res);
+                console.log(res);
+                if (res != null) {
                 this.setState({
                     fn: res.data.fn,
                     ln: res.data.ln,
@@ -88,43 +94,40 @@ export default class UserCard extends Component {
                     followers: res.data.followers,
                     following: res.data.following
 
-                })
+                }); return res} return null;
             })
-            .catch(err => {
-                console.error(err);
-            });
-            axios.get(`${this.path}/profile-pic`)
-            .then(res => {
-            //    console.log(res.data);
-                this.setState({ pfp: res.data });
-             //   console.log(this.state);
-            })
-            .catch(err => {
-                console.error(err);
-            });
-    };
+      
+                .catch(err => {
+                    console.error(err);
+                });
+            };
 
-    sendTweet() {
+    async sendTweet() {
         //      console.log(this.state.tweetDraft);
         const draftContent = this.state.tweetDraft;
         const date = new Date();
         const nowSec = date.getTime();
-        const newTweet = { username: this.state.username, time: nowSec, content: draftContent, pfp: this.state.pfp};
-        const path = '/users/' + this.state.username + '/add-tweet';
-        axios.post(path, newTweet)
+        const newTweet = { username: this.state.username, time: nowSec, content: draftContent};
+
+        const path = 'https://staging-twittah.herokuapp.com/users/' + this.state.username + '/add-tweet';
+       await  axios.post(path, newTweet)
             .then(() => {
                 // console.log(this.state);
                 this.callAPI();
                 console.log("Sent tweet");
                 console.log(this.state);
                 window.location.reload(false);
+                return true;
             })
             .catch(err => {
                 console.error(err);
             });
     }
     render() {
-        if (this.state.fn == null) {this.callAPI()};
+        if (this.state.tweets == null) {
+            this.callAPI();
+        
+        };
         return (
             
             <MDBCard style={{ borderRadius: '15px' }}>
@@ -161,7 +164,7 @@ export default class UserCard extends Component {
                                 </div>
                                 <div>
                                     <p className="small text-muted mb-1">Following</p>
-                                    {this.state.following != null && <p className="mb-0">{Object.keys(this.state.following).length - 2}</p>}
+                                    {this.state.following != null && <p className="mb-0">{Object.keys(this.state.following).length - 1}</p>}
 
                                     <p className="mb-0"> </p>
                                 </div>
@@ -190,8 +193,6 @@ export default class UserCard extends Component {
                         </div>
                         
                     </div>
-                    {this.state.username == localStorage.getItem('currentUser') &&
-                    <div className="justify-content-center">{<PictureUploader />}</div>    }
                 </MDBCardBody>
                 
             </MDBCard>
@@ -199,3 +200,8 @@ export default class UserCard extends Component {
     };
 };
 
+/*
+
+                    {this.state.username == localStorage.getItem('currentUser') &&
+                    <div className="justify-content-center">{<PictureUploader />}</div>    }
+*/

@@ -11,7 +11,7 @@ import { useState } from 'react';
     const user = localStorage.getItem('currentUser');
     formData.append("pic", pic);
     console.log(formData);
-    axios.defaults.baseURL = 'https://cpeg-1.herokuapp.com/';
+    axios.defaults.baseURL = 'https://staging-twittah.herokuapp.com' ;
     
      axios
       .post("/" + user + "/change-profile-pic", formData)

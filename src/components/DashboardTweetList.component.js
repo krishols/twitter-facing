@@ -34,34 +34,44 @@ function formatDate(date) {
 
   
 const DashTweetList = (props) => {
-  //  console.log(props.tweets);
-    var tweets = props.tweets;
-    
+    console.log(props.tweets);
+    var bigTweets = props.tweets;
+    var allTweets = [];
+    var rows = [];
+    if (bigTweets != null) {
+    bigTweets.forEach(userTweets => {
+      for (var singleTweet in userTweets) {
+        allTweets.push({[singleTweet]: userTweets[singleTweet]});
+        //alert('item ' + i + ': ' + property + '=' + object[property]);
+      }
+    });
 
     //const username = props.username;
     var numTweets = 0;
     let timestamps = [];
-    const rows = [];
-    if (props.tweets != null) {
-       tweets =  tweets.sort((a, b) => parseFloat(Object.keys(b)) - parseFloat(Object.keys(a)));
+    
+    if (allTweets != []) {
+       allTweets =  allTweets.sort((a, b) => parseFloat(Object.keys(b)) - parseFloat(Object.keys(a)));
  //   console.log(tweets);
   //      console.log(Object.keys(props.tweets));
-        numTweets = Object.keys(props.tweets).length;
+        numTweets = Object.keys(allTweets).length;
        // timestamps = Object.keys(props.tweets).reverse();
         //const tweets = JSON.parse(props.tweets);
         //console.log(props.tweets[timestamps[0]]);
      //  console.log(props.tweets);
         for (let i = 0; i < numTweets; i++) {
            // console.log(props.tweets[i]);
-            var timestamp = Object.keys(props.tweets[i]);
+            var timestamp = Object.keys(allTweets[i]);
+            
             // note: we are adding a key prop here to allow react to uniquely identify each
             // element in this array. see: https://reactjs.org/docs/lists-and-keys.html
             if (timestamp != 0) {
             const date = new Date(JSON.parse(timestamp)).toDateString();
             const time = formatDate(new Date(JSON.parse(timestamp)).toString()).substring(15,24);
-            rows.push(<TweetCard username={props.tweets[i][timestamp]['username']} content={props.tweets[i][timestamp].content} date={date} time={time} key={i} pfp={props.tweets[i][timestamp].pfp} />);
+            rows.push(<TweetCard username={allTweets[i][timestamp]['username']} content={allTweets[i][timestamp].content} date={date} time={time} key={i} pfp={allTweets[i][timestamp].pfp} />);
             }
         }
+      }
         
     
 

@@ -39,6 +39,7 @@ export default class Login extends Component {
             .then(() => {
                 const path = '/allusers/' + this.state.username;
                 localStorage.setItem('currentUser', this.state.username);
+                
                 console.log("set");
                 
                 window.location = path;
